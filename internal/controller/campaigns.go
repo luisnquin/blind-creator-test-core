@@ -1,12 +1,14 @@
 package controller
 
 import (
-	"github.com/gorilla/mux"
-	"go-backend-challenge/core-utils-private-library"
-	"go-backend-challenge/internal/model"
-	"go-backend-challenge/internal/service"
 	"net/http"
 	"strconv"
+
+	"go-backend-challenge/internal/model"
+	"go-backend-challenge/internal/service"
+
+	"github.com/gorilla/mux"
+	utils "github.com/luisnquin/blind-creator-test-core-utils"
 )
 
 type CampaignsControllerStruct struct {
@@ -21,7 +23,6 @@ type CampaignsControllerInterface interface {
 }
 
 func (c CampaignsControllerStruct) CreateCampaignControllerMethod(w http.ResponseWriter, r *http.Request) {
-
 	var err error
 	requestData := model.CreateCampaignRequestModel{}
 
@@ -45,7 +46,6 @@ func (c CampaignsControllerStruct) CreateCampaignControllerMethod(w http.Respons
 
 	utils.ParseToJson(w, http.StatusOK, utils.Map{"status": "SUCCESS", "message": nil, "data": response})
 	return
-
 }
 
 func (c CampaignsControllerStruct) GetCampaignByIdControllerMethod(w http.ResponseWriter, r *http.Request) {
@@ -58,11 +58,9 @@ func (c CampaignsControllerStruct) GetCampaignByIdControllerMethod(w http.Respon
 	}
 
 	utils.ParseToJson(w, http.StatusOK, utils.Map{"status": "SUCCESS", "message": nil, "data": campaign})
-
 }
 
 func (c CampaignsControllerStruct) ListCampaignsControllerMethod(w http.ResponseWriter, r *http.Request) {
-
 	var err error
 	requestData := model.ListCampaignsRequestModel{}
 
@@ -86,11 +84,9 @@ func (c CampaignsControllerStruct) ListCampaignsControllerMethod(w http.Response
 
 	utils.SuccessPaginationResponse(w, http.StatusOK, response)
 	return
-
 }
 
 func (c CampaignsControllerStruct) UpdateCampaignControllerMethod(w http.ResponseWriter, r *http.Request) {
-
 	var err error
 	var campaignId uint
 	requestData := model.UpdateCampaignRequestModel{}
@@ -122,5 +118,4 @@ func (c CampaignsControllerStruct) UpdateCampaignControllerMethod(w http.Respons
 
 	utils.ParseToJson(w, http.StatusOK, utils.Map{"status": "SUCCESS", "message": nil, "data": response})
 	return
-
 }

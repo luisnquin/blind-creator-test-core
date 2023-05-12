@@ -2,11 +2,13 @@ package router
 
 import (
 	"fmt"
-	"github.com/gorilla/mux"
-	"go-backend-challenge/core-utils-private-library"
+	"net/http"
+
 	"go-backend-challenge/environment"
 	"go-backend-challenge/internal/controller"
-	"net/http"
+
+	"github.com/gorilla/mux"
+	utils "github.com/luisnquin/blind-creator-test-core-utils"
 )
 
 func ApiRouter(c controller.CustomControllerStruct) *mux.Router {

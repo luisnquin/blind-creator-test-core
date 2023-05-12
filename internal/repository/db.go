@@ -2,15 +2,18 @@ package repository
 
 import (
 	"fmt"
-	"github.com/jinzhu/gorm"
-	"go-backend-challenge/core-models-private-library/models/campaign_creator_social_network_actions"
-	"go-backend-challenge/core-models-private-library/models/campaigns"
-	"go-backend-challenge/core-models-private-library/models/companies"
-	"go-backend-challenge/core-models-private-library/models/creator_social_networks"
-	"go-backend-challenge/core-models-private-library/models/user_agency_relations"
-	"go-backend-challenge/core-models-private-library/models/users"
-	"go-backend-challenge/core-utils-private-library"
+
 	"go-backend-challenge/internal/model"
+
+	"github.com/luisnquin/blind-creator-test-core-models/models/campaign_creator_social_network_actions"
+	"github.com/luisnquin/blind-creator-test-core-models/models/campaigns"
+	"github.com/luisnquin/blind-creator-test-core-models/models/companies"
+	"github.com/luisnquin/blind-creator-test-core-models/models/creator_social_networks"
+	"github.com/luisnquin/blind-creator-test-core-models/models/user_agency_relations"
+	"github.com/luisnquin/blind-creator-test-core-models/models/users"
+
+	"github.com/jinzhu/gorm"
+	utils "github.com/luisnquin/blind-creator-test-core-utils"
 )
 
 type AgenciesDbRepository struct {
@@ -118,7 +121,6 @@ func (a AgenciesDbRepository) ListAgencyCampaigns(
 	utils.GormPaginationData,
 	error,
 ) {
-
 	if pagination.Sort == "" {
 		pagination.Sort = "id desc"
 	}
@@ -177,7 +179,6 @@ func (a AgenciesDbRepository) ListAgencyCampaigns(
 	}
 
 	return pagination, tx.Error
-
 }
 
 func (c AgenciesDbRepository) IsAnManagerAgencyRelation(
@@ -187,7 +188,6 @@ func (c AgenciesDbRepository) IsAnManagerAgencyRelation(
 	bool,
 	error,
 ) {
-
 	var relationExists bool
 	var res user_agency_relations.UserAgencyRelation
 
@@ -211,7 +211,6 @@ func (c AgenciesDbRepository) IsAnAgencyCompanyRelation(
 	bool,
 	error,
 ) {
-
 	var relationExists bool
 	var company companies.Company
 

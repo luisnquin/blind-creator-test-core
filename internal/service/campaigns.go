@@ -4,14 +4,17 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"github.com/jinzhu/gorm"
-	"go-backend-challenge/core-models-private-library/models/campaign_creator_social_network_actions"
-	"go-backend-challenge/core-models-private-library/models/campaigns"
-	"go-backend-challenge/core-models-private-library/models/users"
-	"go-backend-challenge/core-utils-private-library"
+	"time"
+
 	"go-backend-challenge/internal/model"
 	"go-backend-challenge/internal/repository"
-	"time"
+
+	"github.com/luisnquin/blind-creator-test-core-models/models/campaign_creator_social_network_actions"
+	"github.com/luisnquin/blind-creator-test-core-models/models/campaigns"
+	"github.com/luisnquin/blind-creator-test-core-models/models/users"
+
+	"github.com/jinzhu/gorm"
+	utils "github.com/luisnquin/blind-creator-test-core-utils"
 )
 
 type CampaignsServiceInterface interface {
@@ -31,7 +34,6 @@ func (c CampaignsServiceStruct) CreateCampaignServiceMethod(
 	model.CreateCampaignResponseModel,
 	error,
 ) {
-
 	manager := users.User{}
 	campaignToCreate := campaigns.Campaign{}
 	response := model.CreateCampaignResponseModel{}
@@ -97,7 +99,6 @@ func (c CampaignsServiceStruct) GetCampaignByIdServiceMethod(
 	model.GetCampaignDetailsResponseModel,
 	error,
 ) {
-
 	campaign, err := c.AgenciesDbRepository.GetCampaignById(campaignId)
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		return model.GetCampaignDetailsResponseModel{}, err
@@ -155,7 +156,6 @@ func (c CampaignsServiceStruct) UpdateCampaignServiceMethod(
 	model.UpdateCampaignResponseModel,
 	error,
 ) {
-
 	var err error
 	campaign := campaigns.Campaign{}
 

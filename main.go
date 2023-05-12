@@ -2,19 +2,21 @@ package main
 
 import (
 	"fmt"
-	"github.com/aws/aws-lambda-go/lambda"
-	"github.com/awslabs/aws-lambda-go-api-proxy/httpadapter"
-	"github.com/rs/cors"
-	"github.com/urfave/negroni"
-	"go-backend-challenge/core-models-private-library/migrations"
-	"go-backend-challenge/environment"
-	"go-backend-challenge/internal/controller"
-	"go-backend-challenge/internal/repository"
-	router "go-backend-challenge/internal/routes"
 	"log"
 	"net/http"
 	"os"
 	"strings"
+
+	"go-backend-challenge/environment"
+	"go-backend-challenge/internal/controller"
+	"go-backend-challenge/internal/repository"
+	router "go-backend-challenge/internal/routes"
+
+	"github.com/aws/aws-lambda-go/lambda"
+	"github.com/awslabs/aws-lambda-go-api-proxy/httpadapter"
+	"github.com/luisnquin/blind-creator-test-core-models/migrations"
+	"github.com/rs/cors"
+	"github.com/urfave/negroni"
 )
 
 func main() {
