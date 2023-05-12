@@ -9,11 +9,9 @@ import (
 	"go-backend-challenge/internal/model"
 	"go-backend-challenge/internal/repository"
 
+	"github.com/jinzhu/gorm"
 	"github.com/luisnquin/blind-creator-test-core-models/models/campaign_creator_social_network_actions"
 	"github.com/luisnquin/blind-creator-test-core-models/models/campaigns"
-	"github.com/luisnquin/blind-creator-test-core-models/models/users"
-
-	"github.com/jinzhu/gorm"
 	utils "github.com/luisnquin/blind-creator-test-core-utils"
 )
 
@@ -34,7 +32,6 @@ func (c CampaignsServiceStruct) CreateCampaignServiceMethod(
 	model.CreateCampaignResponseModel,
 	error,
 ) {
-	manager := users.User{}
 	campaignToCreate := campaigns.Campaign{}
 	response := model.CreateCampaignResponseModel{}
 
@@ -156,11 +153,7 @@ func (c CampaignsServiceStruct) UpdateCampaignServiceMethod(
 	model.UpdateCampaignResponseModel,
 	error,
 ) {
-	var err error
-	campaign := campaigns.Campaign{}
-
-	// get campaign
-	campaign, err = c.AgenciesDbRepository.GetCampaignById(
+	campaign, err := c.AgenciesDbRepository.GetCampaignById(
 		campaignId,
 	)
 	if err != nil {

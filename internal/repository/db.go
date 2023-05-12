@@ -5,14 +5,13 @@ import (
 
 	"go-backend-challenge/internal/model"
 
+	"github.com/jinzhu/gorm"
 	"github.com/luisnquin/blind-creator-test-core-models/models/campaign_creator_social_network_actions"
 	"github.com/luisnquin/blind-creator-test-core-models/models/campaigns"
 	"github.com/luisnquin/blind-creator-test-core-models/models/companies"
 	"github.com/luisnquin/blind-creator-test-core-models/models/creator_social_networks"
 	"github.com/luisnquin/blind-creator-test-core-models/models/user_agency_relations"
 	"github.com/luisnquin/blind-creator-test-core-models/models/users"
-
-	"github.com/jinzhu/gorm"
 	utils "github.com/luisnquin/blind-creator-test-core-utils"
 )
 
@@ -20,17 +19,10 @@ type AgenciesDbRepository struct {
 	*gorm.DB
 }
 
-func (c AgenciesDbRepository) GetUserById(
-	userId uint,
-) (
-	user users.User,
-	err error,
-) {
-	err = c.Table("users").
-		Where("id = ?", userId).
-		First(&user).Error
+func (c AgenciesDbRepository) GetUserById(userId uint) (users.User, error) {
+	var user users.User
 
-	return user, err
+	return user, c.Table("users").Where("id = ?", userId).First(&user).Error
 }
 
 func (c AgenciesDbRepository) GetCampaignById(

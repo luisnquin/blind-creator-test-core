@@ -31,7 +31,6 @@ type CreateCampaignCreatorActions struct {
 }
 
 func (data CreateCampaignRequestModel) ValidateData() error {
-
 	if data.CampaignName == "" {
 		return errors.New("agency_name is required")
 	} else if data.CampaignManagerId == 0 {
@@ -52,7 +51,7 @@ func (data CreateCampaignRequestModel) ValidateData() error {
 		return errors.New("campaign_creator_social_network_actions is required")
 	}
 
-	//todo: Definir el resto de datos requeridos
+	// todo: Definir el resto de datos requeridos
 
 	return nil
 }
