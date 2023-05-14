@@ -3,6 +3,7 @@ package controller
 import (
 	"net/http"
 	"strconv"
+	"strings"
 
 	"go-backend-challenge/internal/model"
 	"go-backend-challenge/internal/service"
@@ -20,6 +21,7 @@ type CampaignsControllerInterface interface {
 	GetCampaignByIdControllerMethod(http.ResponseWriter, *http.Request)
 	ListCampaignsControllerMethod(http.ResponseWriter, *http.Request)
 	UpdateCampaignControllerMethod(http.ResponseWriter, *http.Request)
+	SearchCampaignControllerMethod(http.ResponseWriter, *http.Request)
 }
 
 func (c CampaignsControllerStruct) CreateCampaignControllerMethod(w http.ResponseWriter, r *http.Request) {
@@ -118,4 +120,29 @@ func (c CampaignsControllerStruct) UpdateCampaignControllerMethod(w http.Respons
 
 	utils.ParseToJson(w, http.StatusOK, utils.Map{"status": "SUCCESS", "message": nil, "data": response})
 	return
+}
+
+func (c CampaignsControllerStruct) SearchCampaignControllerMethod(w http.ResponseWriter, r *http.Request) {
+	query := r.URL.Query()
+
+	q := query.Get("q")
+
+	if strings.TrimSpace(q) == "" {
+		utils.ParseToJson(w, http.StatusBadRequest, utils.Map{"status": "ERROR", "message": "you must provide a search word"})
+
+		return
+	}
+
+	results, err := c.SearchCampaignsByQuery(q)
+	if err != nil {
+		utils.ParseToJson(w, http.StatusInternalServerError, utils.Map{"status": "ERROR", "message": err.Error()})
+
+		return
+	}
+
+	utils.ParseToJson(w, http.StatusOK, utils.Map{
+		"status":  "SUCCESS",
+		"message": nil,
+		"data":    &results,
+	})
 }

@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"strings"
 	"time"
 
 	"go-backend-challenge/internal/model"
@@ -88,6 +89,13 @@ func (c CampaignsServiceStruct) CreateCampaignServiceMethod(
 	response.CampaignId = campaignToCreate.ID
 
 	return response, err
+}
+
+func (c CampaignsServiceStruct) SearchCampaignsByQuery(query string,
+) ([]campaign_creator_social_network_actions.CampaignCreatorSocialNetworkActions, error) {
+	query = strings.TrimSpace(strings.ToUpper(query))
+
+	return c.AgenciesDbRepository.SearchCampaignsByQuery(query)
 }
 
 func (c CampaignsServiceStruct) GetCampaignByIdServiceMethod(

@@ -42,6 +42,11 @@ func ApiRouter(c controller.CustomControllerStruct) *mux.Router {
 		c.Campaigns.UpdateCampaignControllerMethod,
 	).Methods(http.MethodPut)
 
+	r.HandleFunc(
+		"/v1/campaigns/search",
+		c.Campaigns.SearchCampaignControllerMethod,
+	).Methods(http.MethodGet)
+
 	fmt.Println("Available Routes:")
 	r.Walk(func(route *mux.Route, router *mux.Router, ancestors []*mux.Route) error {
 		t, err := route.GetPathTemplate()

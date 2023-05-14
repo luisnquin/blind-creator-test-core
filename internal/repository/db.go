@@ -2,6 +2,7 @@ package repository
 
 import (
 	"fmt"
+	"strings"
 
 	"go-backend-challenge/internal/model"
 
@@ -227,4 +228,15 @@ func (c AgenciesDbRepository) UpdateCampaign(
 ) {
 	err := c.Save(&u).Error
 	return u, err
+}
+
+func (c AgenciesDbRepository) SearchCampaignsByQuery(q string) (
+	[]campaign_creator_social_network_actions.CampaignCreatorSocialNetworkActions, error,
+) {
+	var campaigns []campaign_creator_social_network_actions.CampaignCreatorSocialNetworkActions
+
+	fmt.Printf("c.DB.Table(\"campaign_creator_social_network_actions\").Where(\"code_name = ?\", q).QueryExpr(): %v\n", c.DB.Table("campaign_creator_social_network_actions").Where("code_name = ?", q).QueryExpr())
+
+	return campaigns, c.DB.Table("campaign_creator_social_network_actions").
+		Where("code_name LIKE ?", "%"+strings.ToUpper(q)+"%").Find(&campaigns).Error
 }
