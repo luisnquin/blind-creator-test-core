@@ -1,13 +1,6 @@
 set dotenv-load
 set export
 
-alias run := start
-
-default: start
-
-start:
-    go run ./main.go
-
 
 request_username := env_var('BASIC_AUTH_USERNAME')
 request_password := env_var('BASIC_AUTH_PASSWORD')
