@@ -20,12 +20,12 @@ func InitAgenciesDB() *gorm.DB {
 		environment.DbPass,
 	)
 
-	PGDB, err := gorm.Open(environment.DbEngine, DbUrl)
+	db, err := gorm.Open(environment.DbEngine, DbUrl)
 	if err != nil {
 		fmt.Println("Cannot connect to postgres.go database", err)
 	} else {
 		fmt.Println("Connected to Postgres!")
 	}
 
-	return PGDB
+	return db
 }
