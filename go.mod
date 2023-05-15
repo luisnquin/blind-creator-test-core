@@ -9,7 +9,7 @@ require (
 	github.com/jinzhu/gorm v1.9.16
 	github.com/lib/pq v1.10.9
 	github.com/luisnquin/blind-creator-test-core-models v1.0.0
-	github.com/luisnquin/blind-creator-test-core-utils v1.0.0
+	github.com/luisnquin/blind-creator-test-core-utils v1.1.0
 	github.com/rs/cors v1.8.3
 	github.com/urfave/negroni v1.0.0
 )
