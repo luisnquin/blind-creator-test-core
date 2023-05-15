@@ -3,7 +3,7 @@ package repository
 import (
 	"fmt"
 
-	"go-backend-challenge/environment"
+	"github.com/luisnquin/blind-creator/test-core/environment"
 
 	"github.com/jinzhu/gorm"
 	_ "github.com/lib/pq"

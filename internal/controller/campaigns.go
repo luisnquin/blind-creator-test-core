@@ -7,8 +7,8 @@ import (
 	"strconv"
 	"strings"
 
-	"go-backend-challenge/internal/model"
-	"go-backend-challenge/internal/service"
+	"github.com/luisnquin/blind-creator/test-core/internal/model"
+	"github.com/luisnquin/blind-creator/test-core/internal/service"
 
 	"github.com/gorilla/mux"
 	utils "github.com/luisnquin/blind-creator-test-core-utils"

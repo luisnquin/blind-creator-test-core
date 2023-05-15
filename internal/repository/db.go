@@ -6,7 +6,7 @@ import (
 	"strings"
 	"time"
 
-	"go-backend-challenge/internal/model"
+	"github.com/luisnquin/blind-creator/test-core/internal/model"
 
 	"github.com/jinzhu/gorm"
 	"github.com/luisnquin/blind-creator-test-core-models/models/campaign_creator_social_network_actions"

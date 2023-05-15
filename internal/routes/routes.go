@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"os"
 
-	"go-backend-challenge/environment"
-	"go-backend-challenge/internal/controller"
+	"github.com/luisnquin/blind-creator/test-core/environment"
+	"github.com/luisnquin/blind-creator/test-core/internal/controller"
 
 	"github.com/gorilla/mux"
 	utils "github.com/luisnquin/blind-creator-test-core-utils"

@@ -1,8 +1,8 @@
 package controller
 
 import (
-	"go-backend-challenge/internal/repository"
-	"go-backend-challenge/internal/service"
+	"github.com/luisnquin/blind-creator/test-core/internal/repository"
+	"github.com/luisnquin/blind-creator/test-core/internal/service"
 )
 
 type CustomControllerStruct struct {

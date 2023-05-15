@@ -7,10 +7,10 @@ import (
 	"os"
 	"strings"
 
-	"go-backend-challenge/environment"
-	"go-backend-challenge/internal/controller"
-	"go-backend-challenge/internal/repository"
-	router "go-backend-challenge/internal/routes"
+	"github.com/luisnquin/blind-creator/test-core/environment"
+	"github.com/luisnquin/blind-creator/test-core/internal/controller"
+	"github.com/luisnquin/blind-creator/test-core/internal/repository"
+	router "github.com/luisnquin/blind-creator/test-core/internal/routes"
 
 	"github.com/aws/aws-lambda-go/lambda"
 	"github.com/awslabs/aws-lambda-go-api-proxy/httpadapter"

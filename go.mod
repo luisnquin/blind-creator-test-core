@@ -1,4 +1,4 @@
-module go-backend-challenge
+module github.com/luisnquin/blind-creator/test-core
 
 go 1.18
 
