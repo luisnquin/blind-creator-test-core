@@ -3,6 +3,7 @@ package router
 import (
 	"fmt"
 	"net/http"
+	"os"
 
 	"go-backend-challenge/environment"
 	"go-backend-challenge/internal/controller"
@@ -53,13 +54,20 @@ func ApiRouter(c controller.CustomControllerStruct) *mux.Router {
 	).Methods(http.MethodPost)
 
 	fmt.Println("Available Routes:")
+
 	r.Walk(func(route *mux.Route, router *mux.Router, ancestors []*mux.Route) error {
 		t, err := route.GetPathTemplate()
+		if err != nil {
+			return err
+		}
+
 		methods, err := route.GetMethods()
 		if err != nil {
 			return err
 		}
-		fmt.Println(t, methods)
+
+		fmt.Fprintln(os.Stdout, t, methods)
+
 		return nil
 	})
 
