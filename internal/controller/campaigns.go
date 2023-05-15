@@ -1,7 +1,9 @@
 package controller
 
 import (
+	"fmt"
 	"net/http"
+	"os"
 	"strconv"
 	"strings"
 
@@ -22,6 +24,7 @@ type CampaignsControllerInterface interface {
 	ListCampaignsControllerMethod(http.ResponseWriter, *http.Request)
 	UpdateCampaignControllerMethod(http.ResponseWriter, *http.Request)
 	SearchCampaignControllerMethod(http.ResponseWriter, *http.Request)
+	CreateCampaignSocialNetworkActionControllerMethod(http.ResponseWriter, *http.Request)
 }
 
 func (c CampaignsControllerStruct) CreateCampaignControllerMethod(w http.ResponseWriter, r *http.Request) {
@@ -144,5 +147,43 @@ func (c CampaignsControllerStruct) SearchCampaignControllerMethod(w http.Respons
 		"status":  "SUCCESS",
 		"message": nil,
 		"data":    &results,
+	})
+}
+
+func (c CampaignsControllerStruct) CreateCampaignSocialNetworkActionControllerMethod(w http.ResponseWriter, r *http.Request) {
+	var request model.CreateSocialNetworkActionRequest
+
+	if err := request.Decode(r); err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		utils.ParseToJson(w, http.StatusBadRequest, utils.Map{
+			"status": "ERROR", "message": "unable to decode request data",
+		})
+
+		return
+	}
+
+	if err := request.Validate(); err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		utils.ParseToJson(w, http.StatusBadRequest, utils.Map{
+			"status": "ERROR", "message": err.Error(),
+		})
+
+		return
+	}
+
+	actionId, err := c.CreateCampaignSocialNetworkServiceMethod(request)
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		utils.ParseToJson(w, http.StatusBadRequest, utils.Map{
+			"status": "ERROR", "message": err.Error(),
+		})
+
+		return
+	}
+
+	utils.ParseToJson(w, http.StatusOK, utils.Map{
+		"status": "SUCCESS", "message": nil, "data": map[string]uint{
+			"action_id": actionId,
+		},
 	})
 }

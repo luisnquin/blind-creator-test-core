@@ -1,8 +1,10 @@
 package repository
 
 import (
+	"database/sql"
 	"fmt"
 	"strings"
+	"time"
 
 	"go-backend-challenge/internal/model"
 
@@ -93,6 +95,28 @@ func (c AgenciesDbRepository) CreateCampaignCreatorSocialNetworkAction(
 	campaign_creator_social_network_actions.CampaignCreatorSocialNetworkActions,
 	error,
 ) {
+	if !u.CreatedAt.Valid {
+		u.CreatedAt = sql.NullTime{
+			Time:  time.Now().UTC(),
+			Valid: true,
+		}
+	}
+
+	if !u.UpdatedAt.Valid {
+		u.UpdatedAt = sql.NullTime{
+			Time:  time.Now().UTC(),
+			Valid: true,
+		}
+	}
+
+	if u.DraftContentStatus == "" {
+		u.DraftContentStatus = campaign_creator_social_network_actions.ContentStatusPending
+	}
+
+	if u.FinalContentStatus == "" {
+		u.FinalContentStatus = campaign_creator_social_network_actions.ContentStatusPending
+	}
+
 	c.Exec(
 		fmt.Sprintf(
 			"SELECT setval('%s_id_seq', (select max(id) from %s) + 1, FALSE);",
@@ -239,4 +263,33 @@ func (c AgenciesDbRepository) SearchCampaignsByQuery(q string) (
 
 	return campaigns, c.DB.Table("campaign_creator_social_network_actions").
 		Where("code_name LIKE ?", "%"+strings.ToUpper(q)+"%").Find(&campaigns).Error
+}
+
+// campaign_creator_social_network_actions
+
+func (c AgenciesDbRepository) CampaignExistsByID(id uint) (bool, error) {
+	return c.rowExistsInTable("campaigns", id)
+}
+
+func (c AgenciesDbRepository) CreatorExistsByID(id uint) (bool, error) {
+	return c.rowExistsInTable("creators", id)
+}
+
+func (c AgenciesDbRepository) CreatorHasSocialNetwork(creatorId, socialNetworkId uint) (bool, error) {
+	var result rowWithFound
+
+	err := c.Table("creator_social_networks").Select("COUNT(*) > 0 AS Found").
+		Where("id = ? AND creator_id = ?", socialNetworkId, creatorId).Find(&result).Error
+
+	return result.Found, err
+}
+
+func (c AgenciesDbRepository) rowExistsInTable(tableName string, id uint) (bool, error) {
+	var result rowWithFound
+
+	query := fmt.Sprintf("SELECT EXISTS(SELECT 1 FROM %s WHERE id = ?) AS Found", tableName)
+
+	err := c.Raw(query, id).Scan(&result).Error
+
+	return result.Found, err
 }

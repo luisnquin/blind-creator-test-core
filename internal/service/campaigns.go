@@ -200,3 +200,31 @@ func (c CampaignsServiceStruct) UpdateCampaignServiceMethod(
 	response.CampaignFinalDate = campaign.FinalDate.Time.Format("2006-01-02")
 	return response, err
 }
+
+func (c CampaignsServiceStruct) CreateCampaignSocialNetworkServiceMethod(request model.CreateSocialNetworkActionRequest) (uint, error) {
+	if exists, err := c.CreatorExistsByID(request.CreatorId); err != nil {
+		return 0, err
+	} else if !exists {
+		return 0, fmt.Errorf("creator with id '%d' does not exists", request.CreatorId)
+	}
+
+	if exists, err := c.CampaignExistsByID(request.CampaignId); err != nil {
+		return 0, err
+	} else if !exists {
+		return 0, fmt.Errorf("campaign with id '%d' does not exists", request.CreatorId)
+	}
+
+	if has, err := c.CreatorHasSocialNetwork(request.CreatorId, request.CreatorSocialNetworkId); err != nil {
+		return 0, err
+	} else if !has {
+		return 0,
+			fmt.Errorf("creator with id '%d' doesn't have a social network with id '%d'", request.CreatorId, request.CreatorSocialNetworkId)
+	}
+
+	action, err := c.CreateCampaignCreatorSocialNetworkAction(request.CampaignCreatorSocialNetworkActions)
+	if err != nil {
+		return 0, err
+	}
+
+	return action.ID, nil
+}
