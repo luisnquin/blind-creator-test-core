@@ -8,7 +8,7 @@ require (
 	github.com/gorilla/mux v1.8.0
 	github.com/lib/pq v1.10.9
 	github.com/luisnquin/blind-creator-test-core-models v1.1.0
-	github.com/luisnquin/blind-creator-test-core-utils v1.1.0
+	github.com/luisnquin/blind-creator-test-core-utils v1.2.0
 	github.com/rs/cors v1.8.3
 	github.com/urfave/negroni v1.0.0
 	gorm.io/driver/postgres v1.5.0
