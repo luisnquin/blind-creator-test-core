@@ -10,10 +10,10 @@ import (
 	"github.com/luisnquin/blind-creator/test-core/internal/model"
 	"github.com/luisnquin/blind-creator/test-core/internal/repository"
 
-	"github.com/jinzhu/gorm"
 	"github.com/luisnquin/blind-creator-test-core-models/models/campaign_creator_social_network_actions"
 	"github.com/luisnquin/blind-creator-test-core-models/models/campaigns"
 	utils "github.com/luisnquin/blind-creator-test-core-utils"
+	"gorm.io/gorm"
 )
 
 type CampaignsServiceInterface interface {

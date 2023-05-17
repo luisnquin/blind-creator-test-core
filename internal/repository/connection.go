@@ -5,14 +5,17 @@ import (
 
 	"github.com/luisnquin/blind-creator/test-core/environment"
 
-	"github.com/jinzhu/gorm"
 	_ "github.com/lib/pq"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 )
 
 func InitAgenciesDB() *gorm.DB {
 	environment.InitializeEnv()
 
-	DbUrl := fmt.Sprintf("host=%s port=%s user=%s dbname=%s sslmode=require password=%s TimeZone=America/New_York",
+	environment.DbPass = "5B$Ns5X2N$PF8GQK9fAr8ueAs3r"
+
+	dsn := fmt.Sprintf("host=%s port=%s user=%s dbname=%s sslmode=require password=%s TimeZone=America/New_York",
 		environment.DbHost,
 		environment.DbPort,
 		environment.DbUser,
@@ -20,7 +23,7 @@ func InitAgenciesDB() *gorm.DB {
 		environment.DbPass,
 	)
 
-	db, err := gorm.Open(environment.DbEngine, DbUrl)
+	db, err := gorm.Open(postgres.Open(dsn))
 	if err != nil {
 		fmt.Println("Cannot connect to postgres.go database", err)
 	} else {

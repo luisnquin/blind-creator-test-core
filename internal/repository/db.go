@@ -3,12 +3,13 @@ package repository
 import (
 	"database/sql"
 	"fmt"
+	"math"
+	"sort"
 	"strings"
 	"time"
 
 	"github.com/luisnquin/blind-creator/test-core/internal/model"
 
-	"github.com/jinzhu/gorm"
 	"github.com/luisnquin/blind-creator-test-core-models/models/campaign_creator_social_network_actions"
 	"github.com/luisnquin/blind-creator-test-core-models/models/campaigns"
 	"github.com/luisnquin/blind-creator-test-core-models/models/companies"
@@ -16,6 +17,7 @@ import (
 	"github.com/luisnquin/blind-creator-test-core-models/models/user_agency_relations"
 	"github.com/luisnquin/blind-creator-test-core-models/models/users"
 	utils "github.com/luisnquin/blind-creator-test-core-utils"
+	"gorm.io/gorm"
 )
 
 type AgenciesDbRepository struct {
@@ -138,12 +140,6 @@ func (a AgenciesDbRepository) ListAgencyCampaigns(
 	utils.GormPaginationData,
 	error,
 ) {
-	if pagination.Sort == "" {
-		pagination.Sort = "id desc"
-	}
-
-	var results []model.ListCampaignsResponseModel
-
 	selectColumns := `
 		campaigns.id as campaign_id,
 		campaigns.created_at as campaign_created_at,
@@ -161,15 +157,42 @@ func (a AgenciesDbRepository) ListAgencyCampaigns(
 		users.first_name as manager_name,
 		users.email as manager_email,
 		companies.name as company_name,
-		companies.email as company_email
+		companies.email as company_email,
+		campaign_actions.id AS action_id,
+		campaign_actions.code_name AS action_code_name,
+		campaign_actions.quantity AS action_quantity,
+		campaign_actions.cost_price AS action_cost_price,
+		campaign_actions.bundle_price AS action_bundle_price,
+		campaign_actions.accepted_price AS action_accepted_price,
+		campaign_actions.cost_currency AS action_cost_currency,
+		campaign_actions.draft_content_status AS action_draft_content_status,
+		campaign_actions.final_content_status AS action_final_content_status,
+		campaign_actions.upload_draft_content_date AS action_upload_draft_content_date,
+		campaign_actions.upload_final_content_date AS action_upload_final_content_date,
+		campaign_actions.payment_condition AS action_payment_condition,
+		creators.id AS action_creator_id,
+		creators.name AS action_creator_name,
+		creators.avatar AS action_creator_avatar,
+		creators.email AS action_creator_email,
+		social_networks.id AS action_creator_social_network_id,
+		social_networks.social_network AS action_creator_social_network_name,
+		social_networks.username AS action_creator_social_network_username
 	`
 
-	tx := a.Table("campaigns").
+	campaignsQuery := a.Table("campaigns").Select(`
+		id, created_at, updated_at, deleted_at, name, initial_date, final_date,
+		budget, currency, agency_id, manager_id, company_id, bundle_id
+	`).
+		Where("campaigns.agency_id = ? AND campaigns.deleted_at IS NULL", agencyId).
+		Offset(pagination.GetOffset()).Limit(pagination.GetLimit()) // .Order(pagination.GetSort())
+
+	tx := a.Table("(?) AS campaigns", campaignsQuery).
 		Select(selectColumns).
-		Joins("join users on users.id = campaigns.manager_id").
-		Joins("join companies on companies.id = companies.manager_id").
-		Where("campaigns.agency_id = ?", agencyId).
-		Where("campaigns.deleted_at is null")
+		Joins("LEFT JOIN campaign_creator_social_network_actions AS campaign_actions ON campaign_actions.campaign_id = campaigns.id").
+		Joins("LEFT JOIN creators ON creators.id = campaign_actions.creator_id").
+		Joins("LEFT JOIN creator_social_networks AS social_networks ON social_networks.creator_id = creators.id").
+		Joins("JOIN users ON users.id = campaigns.manager_id").
+		Joins("JOIN companies ON companies.id = campaigns.company_id")
 
 	if keywordSearch != "" {
 		tx = tx.
@@ -183,16 +206,52 @@ func (a AgenciesDbRepository) ListAgencyCampaigns(
 			)
 	}
 
-	pagination.Sort = "campaigns.id desc"
+	// It's not possible to use `utils.Paginate` in this case because the
+	// number of retrieved rows doesn't correspond with the final
+	//
+	// tx = tx.Scopes(paginate(rawResults, &pagination, tx))
 
-	tx = tx.Scopes(utils.Paginate(results, &pagination, tx)).
-		Scan(&results)
+	var rawResults []*model.ListCampaignsDTO
 
+	tx = tx.Scan(&rawResults)
+
+	idCampaign := make(map[uint]*model.ListCampaignsResponseModel)
+
+	for _, r := range rawResults {
+		campaign, ok := idCampaign[r.CampaignManagerCompany.CampaignID]
+		if !ok {
+			campaign = &model.ListCampaignsResponseModel{
+				CampaignManagerCompany: r.CampaignManagerCompany,
+			}
+		}
+
+		campaign.CampaignCreatorSocialNetworkActions = append(campaign.CampaignCreatorSocialNetworkActions, r.CampaignCreatorSocialNetworkAction)
+
+		idCampaign[campaign.CampaignID] = campaign
+	}
+
+	results := make([]*model.ListCampaignsResponseModel, 0, len(idCampaign))
+
+	for _, campaign := range idCampaign {
+		results = append(results, campaign)
+	}
+
+	if strings.Contains(pagination.Sort, "asc") {
+		sort.SliceStable(results, func(i, j int) bool {
+			return results[i].CampaignID < results[j].CampaignID
+		})
+	} else {
+		sort.SliceStable(results, func(i, j int) bool {
+			return results[i].CampaignID > results[j].CampaignID
+		})
+	}
+
+	a.Model(campaigns.Campaign{}).Count(&pagination.TotalRows)
+	pagination.TotalPages = int(math.Ceil(float64(pagination.TotalRows) / float64(pagination.GetLimit()))) // float64(pagination.GetLimit())))
 	pagination.Rows = results
 
 	if pagination.Rows == nil {
 		pagination.Rows = make([]interface{}, 0)
-		return utils.GormPaginationData{}, tx.Error
 	}
 
 	return pagination, tx.Error
@@ -258,8 +317,6 @@ func (c AgenciesDbRepository) SearchCampaignsByQuery(q string) (
 	[]campaign_creator_social_network_actions.CampaignCreatorSocialNetworkActions, error,
 ) {
 	var campaigns []campaign_creator_social_network_actions.CampaignCreatorSocialNetworkActions
-
-	fmt.Printf("c.DB.Table(\"campaign_creator_social_network_actions\").Where(\"code_name = ?\", q).QueryExpr(): %v\n", c.DB.Table("campaign_creator_social_network_actions").Where("code_name = ?", q).QueryExpr())
 
 	return campaigns, c.DB.Table("campaign_creator_social_network_actions").
 		Where("code_name LIKE ?", "%"+strings.ToUpper(q)+"%").Find(&campaigns).Error
