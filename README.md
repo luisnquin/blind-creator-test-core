@@ -34,7 +34,7 @@ https://www.postman.com/blind-creator/workspace/github.com/luisnquin/blind-creat
 
 ## 4. Challenges
 
-- [ ] Add metadata
+- [x] Add metadata
 
   We want to add an campaign_creator_social_network_actions array for each campaign in the list campaign response data
 
